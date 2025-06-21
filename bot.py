@@ -1,12 +1,11 @@
 import os
 import asyncio
+import pafy
 from pyrogram import Client, filters
 from pytgcalls import PyTgCalls, idle, StreamType
 from pytgcalls.types.input_stream import InputStream, InputAudioStream
-from yt_dlp import YoutubeDL
 from collections import deque
 
-# Environment Config
 API_ID = int(os.environ["API_ID"])
 API_HASH = os.environ["API_HASH"]
 BOT_TOKEN = os.environ["BOT_TOKEN"]
@@ -15,20 +14,13 @@ app = Client("music_bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 pytgcalls = PyTgCalls(app)
 queues = {}
 
-ydl_opts = {
-    'format': 'bestaudio/best',
-    'quiet': True,
-    'no_warnings': True,
-    'default_search': 'ytsearch',
-    'source_address': '0.0.0.0'
-}
-
-def get_audio_link(query):
-    with YoutubeDL(ydl_opts) as ydl:
-        info = ydl.extract_info(query, download=False)
-        url = info['url']
-        title = info.get('title', 'Unknown Title')
-        return url, title
+def get_audio_link(url):
+    try:
+        video = pafy.new(url)
+        best_audio = video.getbestaudio()
+        return best_audio.url, video.title
+    except Exception as e:
+        return None, str(e)
 
 async def stream_next(chat_id):
     queue = queues.get(chat_id)
@@ -47,10 +39,13 @@ async def stream_next(chat_id):
 async def play_handler(_, msg):
     chat_id = msg.chat.id
     if len(msg.command) < 2:
-        return await msg.reply("❌ Usage: `/play <song name or YouTube URL>`")
+        return await msg.reply("❌ Usage: `/play <YouTube URL>`")
 
-    query = " ".join(msg.command[1:])
+    query = msg.command[1]
     url, title = get_audio_link(query)
+
+    if not url:
+        return await msg.reply(f"❌ Failed to fetch audio: {title}")
 
     if chat_id not in queues:
         queues[chat_id] = deque()
