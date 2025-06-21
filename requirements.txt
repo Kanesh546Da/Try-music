@@ -3,5 +3,5 @@ tgcrypto
 pafy
 youtube_dl
 ffmpeg-python
-py-tgcalls==0.0.20
+py-tgcalls==1.2.7
 flask
