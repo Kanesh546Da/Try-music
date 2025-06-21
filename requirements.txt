@@ -1,4 +1,4 @@
 pyrogram==2.0.16
-pytgcalls==2.3.1
-yt-dlp==2025.06.20
-ffmpeg-python==0.2.0
+pytgcalls==0.9.5
+yt-dlp
+ffmpeg-python
