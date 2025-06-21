@@ -1,8 +1,7 @@
 import os
 import asyncio
 from pyrogram import Client, filters
-from pytgcalls import PyTgCalls, idle
-from pytgcalls.types.stream import StreamEnded
+from pytgcalls import PyTgCalls, idle, StreamType
 from pytgcalls.types.input_stream import InputStream, InputAudioStream
 from yt_dlp import YoutubeDL
 from collections import deque
@@ -12,14 +11,12 @@ API_ID = int(os.environ["API_ID"])
 API_HASH = os.environ["API_HASH"]
 BOT_TOKEN = os.environ["BOT_TOKEN"]
 
-# Initialize clients
 app = Client("music_bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 pytgcalls = PyTgCalls(app)
-
 queues = {}
 
 ydl_opts = {
-    'format': 'bestaudio',
+    'format': 'bestaudio/best',
     'quiet': True,
     'no_warnings': True,
     'default_search': 'ytsearch',
@@ -43,21 +40,14 @@ async def stream_next(chat_id):
     await pytgcalls.join_group_call(
         chat_id,
         InputStream(InputAudioStream(url)),
-        stream_type="local_stream"
+        stream_type=StreamType().local_stream
     )
-
-@pytgcalls.on_stream_end()
-async def on_stream_end_handler(_, update: StreamEnded):
-    chat_id = update.chat_id
-    if chat_id in queues and queues[chat_id]:
-        queues[chat_id].popleft()
-        await stream_next(chat_id)
 
 @app.on_message(filters.command("play") & filters.group)
 async def play_handler(_, msg):
     chat_id = msg.chat.id
     if len(msg.command) < 2:
-        return await msg.reply("❌ Usage: `/play song name or URL`", quote=True)
+        return await msg.reply("❌ Usage: `/play <song name or YouTube URL>`")
 
     query = " ".join(msg.command[1:])
     url, title = get_audio_link(query)
@@ -76,25 +66,25 @@ async def skip_handler(_, msg):
     chat_id = msg.chat.id
     if chat_id in queues and queues[chat_id]:
         queues[chat_id].popleft()
-        await msg.reply("⏭ Skipped.")
+        await msg.reply("⏭ Skipped current song.")
         await stream_next(chat_id)
 
 @app.on_message(filters.command("pause") & filters.group)
 async def pause_handler(_, msg):
     await pytgcalls.pause_stream(msg.chat.id)
-    await msg.reply("⏸ Paused")
+    await msg.reply("⏸ Paused playback.")
 
 @app.on_message(filters.command("resume") & filters.group)
 async def resume_handler(_, msg):
     await pytgcalls.resume_stream(msg.chat.id)
-    await msg.reply("▶️ Resumed")
+    await msg.reply("▶️ Resumed playback.")
 
 @app.on_message(filters.command("stop") & filters.group)
 async def stop_handler(_, msg):
     chat_id = msg.chat.id
     queues.pop(chat_id, None)
     await pytgcalls.leave_group_call(chat_id)
-    await msg.reply("⏹ Stopped and queue cleared.")
+    await msg.reply("⏹ Stopped and cleared queue.")
 
 @app.on_message(filters.command("queue") & filters.group)
 async def queue_handler(_, msg):
