@@ -4,17 +4,17 @@ import pafy
 from flask import Flask
 from threading import Thread
 from pyrogram import Client, filters
-from pytgcalls import PyTgCalls, idle, StreamType
+from pytgcalls import PyTgCalls, idle
 from pytgcalls.types.input_stream import InputStream, InputAudioStream
 from collections import deque
 
-# =================== Flask Dummy Web Server (for Render) ===================
+# =============== Dummy Flask Web Server for Render ===============
 
 web = Flask(__name__)
 
 @web.route("/")
 def home():
-    return "🎵 Telegram Music Bot is Running on Render!"
+    return "✅ Telegram Music Bot is Running (Render)"
 
 def run_web():
     web.run(host="0.0.0.0", port=8080)
@@ -50,8 +50,7 @@ async def stream_next(chat_id):
     url, title = queue[0]
     await pytgcalls.join_group_call(
         chat_id,
-        InputStream(InputAudioStream(url)),
-        stream_type=StreamType().local_stream
+        InputStream(InputAudioStream(url))
     )
 
 # =================== Bot Command Handlers ===================
@@ -115,7 +114,7 @@ async def queue_handler(_, msg):
 async def main():
     await app.start()
     await pytgcalls.start()
-    print("🎶 Bot is up and running!")
+    print("🎶 Bot is running...")
     await idle()
     await app.stop()
 
@@ -124,4 +123,4 @@ async def main():
 if __name__ == "__main__":
     Thread(target=run_web).start()  # Keeps bot alive on Render
     asyncio.run(main())
-      
+    
