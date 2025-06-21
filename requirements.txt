@@ -1,0 +1,7 @@
+pyrogram==2.0.16
+tgcrypto
+pafy
+youtube_dl
+ffmpeg-python
+py-tgcalls[pyrogram]
+flask
