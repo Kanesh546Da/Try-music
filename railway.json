@@ -1,7 +1,6 @@
 {
-  "deploy": {
+  "build": {
     "buildCommand": "pip install -r requirements.txt",
-    "startCommand": "python bot.py",
-    "startOnPush": true
+    "startCommand": "python bot.py"
   }
 }
