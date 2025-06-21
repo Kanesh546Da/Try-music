@@ -47,7 +47,7 @@ async def stream_next(chat_id):
     )
 
 @pytgcalls.on_stream_end()
-async def on_stream_end(_, update: Update):
+async def on_stream_end_handler(_, update: StreamEnded):
     chat_id = update.chat_id
     if chat_id in queues and queues[chat_id]:
         queues[chat_id].popleft()
