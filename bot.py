@@ -2,24 +2,24 @@ import os
 import asyncio
 from pyrogram import Client, filters
 from pytgcalls import PyTgCalls, idle
-from pytgcalls.types import Update
-from pytgcall
 from pytgcalls.types.stream import StreamEnded
 from pytgcalls.types.input_stream import InputStream, InputAudioStream
 from yt_dlp import YoutubeDL
 from collections import deque
 
+# Environment Config
 API_ID = int(os.environ["API_ID"])
 API_HASH = os.environ["API_HASH"]
 BOT_TOKEN = os.environ["BOT_TOKEN"]
 
+# Initialize clients
 app = Client("music_bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 pytgcalls = PyTgCalls(app)
 
 queues = {}
 
 ydl_opts = {
-    'format': 'bestaudio/best',
+    'format': 'bestaudio',
     'quiet': True,
     'no_warnings': True,
     'default_search': 'ytsearch',
