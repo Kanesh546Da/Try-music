@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: telegram-music-bot
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python bot.py
+    autoDeploy: true
+    envVars:
+      - key: API_ID
+        value: 20024376
+      - key: API_HASH
+        value: 8e00fed238e322cc77d3ea94bc0935d1
+      - key: BOT_TOKEN
+        value: 7604389748:AAE2CFRnfWnGPdioFyf9Nb5KgDDJJcnC8YM
+        
