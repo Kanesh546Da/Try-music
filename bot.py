@@ -3,7 +3,8 @@ import asyncio
 from pyrogram import Client, filters
 from pytgcalls import PyTgCalls, idle
 from pytgcalls.types import Update
-from pytgcalls.types.stream import StreamAudioEnded
+from pytgcall
+from pytgcalls.types.stream import StreamEnded
 from pytgcalls.types.input_stream import InputStream, InputAudioStream
 from yt_dlp import YoutubeDL
 from collections import deque
