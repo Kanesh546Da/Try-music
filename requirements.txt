@@ -3,5 +3,5 @@ tgcrypto
 pafy
 youtube_dl
 ffmpeg-python
-py-tgcalls[pyrogram]
+py-tgcalls==0.0.20
 flask
