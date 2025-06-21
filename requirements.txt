@@ -1,6 +1,0 @@
-pyrogram==2.0.16
-ffmpeg-python
-tgcrypto
-py-tgcalls[pyrogram]
-pafy
-youtube_dl
